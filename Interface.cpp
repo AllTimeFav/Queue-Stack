@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ class stack{
     }
     int peek(){
         if (top == -1){
-            cout<<"stack is empty";
+//            cout<<"stack is empty";
             return -1 ;
         }
         return a[top];
@@ -49,6 +50,74 @@ class stack{
         return (top == -1) ? true : false ;  
         // if(top == -1){ return true; } else{ return false; }
     }
+    
+    bool BalanceParenthesis(char *exp){
+		stack s(strlen(exp)+1);
+		int i=0;
+		
+		while(exp[i] != '\0'){
+			if(exp[i] == '('  || exp[i] == '{'  || exp[i] == '[')
+				s.push(exp[i]);
+				
+				else if(exp[i] == ')'  || exp[i] == '}'  || exp[i] == ']'){
+				
+				if(s.isempty()) {	return false;	}
+			
+				char temp = s.pop();
+				
+				if((exp[i] == ')' && temp != '(') ||
+					(exp[i] == '}' && temp != '{') ||
+					(exp[i] == ']' && temp != '['))
+							
+					return false;
+			}
+			i++;
+		}
+		return s.isempty();
+	}
+	
+	int pre(char x)
+	{
+		if (x == '+' || x == '-')
+			return 1;
+		else if (x == '*' || x == '/')
+			return 2;
+		return 0;
+	}
+	
+	bool isOperand(char x)
+	{
+		if (x == '+' || x == '-' || x == '*' || x == '/')
+			return false;
+		else
+			return true;
+	}
+	
+	char *InToPost(char *infix)
+	{
+		stack myStack(strlen(infix));
+		int i = 0, j = 0;
+		int len = strlen(infix);
+		char *postfix = new char[len + 1];
+		
+		while (infix[i] != '\0')
+		{
+			if (isOperand(infix[i]))
+				postfix[j++] = infix[i++];
+			else
+			{
+				if (pre(infix[i]) > pre(myStack.peek()))
+					myStack.push(infix[i++]);
+				else
+					postfix[j++] = myStack.pop();
+			}
+		}
+		while (!myStack.isempty())
+			postfix[j++] = myStack.pop();
+			
+		postfix[j] = '\0';
+		return postfix;
+	}
 };
 
 // With linked list
@@ -295,6 +364,8 @@ int main() {
         cout << "5. Push to stack with linked list" << endl;
         cout << "6. Pop from stack with linked list" << endl;
         cout << "7. Is stack with linked list empty?" << endl;
+        cout << "8. Check Parenthesis " << endl;
+        cout << "9. Infix to Postfix" << endl;
         cout << "0. Exit" << endl;
 
         cin >> choice;
@@ -333,6 +404,23 @@ int main() {
             case 7:
                 cout << "Is stack with linked list empty? " << (s_ll.isempty() ? "Yes" : "No") << endl;
                 break;
+            
+            case 8:
+				char exp[50];
+				
+				cout << "Enter the expresseion to check for parenthesis : ";  cin >> exp;
+				
+				cout << "Is " << exp << " Balanced? : " << (s_arr.BalanceParenthesis(exp)? "Yes" : "No") << endl;
+				break;
+				
+			case 9:
+				char infix[50];
+				
+				cout << "Enter the Infix to convert to Postfix : ";  cin >> infix;
+				cout << "PostFix : " << s_arr.InToPost(infix) << endl;
+				
+				
+				break;
 
             case 0:
                 cout << "Exiting program." << endl;
@@ -435,7 +523,7 @@ int main() {
 
                 } while (choice != 0);
                 break;
-
+			
             case 0:
                 cout << "Exiting program." << endl;
                 break;
